@@ -43,9 +43,10 @@ function AppShell() {
   const location = useLocation();
   const user = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
+  const isDemo = useSelector((state) => state.auth.isDemo);
 
   useEffect(() => {
-    if (!token) return;
+    if (!token || isDemo) return;
 
     authApi
       .me()
@@ -57,7 +58,7 @@ function AppShell() {
         dispatch(logout());
         navigate('/login');
       });
-  }, [dispatch, navigate, token]);
+  }, [dispatch, navigate, token, isDemo]);
 
   const role = user?.role || 'Employee';
   const path = location.pathname;

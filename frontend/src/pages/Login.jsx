@@ -28,18 +28,20 @@ export default function LoginPage() {
       const payload = response?.data?.data || {};
       const user = payload.user || { ...profile, email: form.email, role: 'Admin' };
       const token = payload.token || localStorage.getItem('auth_token') || 'demo-jwt-token';
+      const isDemo = !payload.token;
 
-      dispatch(setCredentials({ user, token, rememberMe }));
+      dispatch(setCredentials({ user: { ...user, isDemo }, token, rememberMe, isDemo }));
       navigate('/dashboard');
     } catch (err) {
       const fallbackUser = {
         ...profile,
         email: form.email,
         role: form.email.includes('manager') ? 'Manager' : form.email.includes('employee') ? 'Employee' : 'Admin',
+        isDemo: true,
       };
 
       if (form.email && form.password) {
-        dispatch(setCredentials({ user: fallbackUser, token: 'demo-jwt-token', rememberMe }));
+        dispatch(setCredentials({ user: fallbackUser, token: 'demo-jwt-token', rememberMe, isDemo: true }));
         navigate('/dashboard');
         return;
       }

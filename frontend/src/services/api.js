@@ -19,7 +19,10 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const token = localStorage.getItem('auth_token');
+    const isDemoToken = token === 'demo-jwt-token';
+
+    if (error.response?.status === 401 && !isDemoToken) {
       localStorage.removeItem('auth_token');
       localStorage.removeItem('remember_me');
       window.location.href = '/login';
