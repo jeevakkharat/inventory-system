@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, MenuItem } from '@mui/material';
+import { toast } from 'react-toastify';
 import { useSearchParams } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import StatusBadge from '../components/common/StatusBadge';
@@ -8,6 +10,8 @@ import { inventoryApi } from '../services/api';
 const DEFAULT_ITEM_FORM = { name: '', sku: '', quantity: 0, categoryId: '' };
 
 export default function InventoryPage() {
+  const user = useSelector((state) => state.auth.user);
+  const canManageInventory = ['Admin', 'Manager', 'Inventory Manager'].includes(user?.role);
   const [items, setItems] = useState([]);
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -71,18 +75,26 @@ export default function InventoryPage() {
       categoryId: form.categoryId,
     };
 
-    if (!payload.name || !payload.sku) return;
-
-    if (editingId) {
-      await inventoryApi.updateItem(editingId, payload);
-    } else {
-      await inventoryApi.createItem(payload);
+    if (!payload.name || !payload.sku) {
+      toast.error('Item name and SKU are required');
+      return;
     }
 
-    setOpen(false);
-    setForm(DEFAULT_ITEM_FORM);
-    setEditingId(null);
-    fetchItems();
+    try {
+      if (editingId) {
+        await inventoryApi.updateItem(editingId, payload);
+      } else {
+        await inventoryApi.createItem(payload);
+      }
+
+      setOpen(false);
+      setForm(DEFAULT_ITEM_FORM);
+      setEditingId(null);
+      fetchItems();
+      toast.success(editingId ? 'Item updated' : 'Item created');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Unable to save item');
+    }
   };
 
   return (
@@ -100,7 +112,7 @@ export default function InventoryPage() {
           <MenuItem value="In Stock">In Stock</MenuItem>
           <MenuItem value="Low Stock">Low Stock</MenuItem>
         </TextField>
-        <Button variant="contained" sx={{ ml: 'auto' }} onClick={openCreateDialog}>Add Item</Button>
+        {canManageInventory && <Button variant="contained" sx={{ ml: 'auto' }} onClick={openCreateDialog}>Add Item</Button>}
       </Stack>
       <Paper>
         <Table>
@@ -125,7 +137,7 @@ export default function InventoryPage() {
                 <TableCell><StatusBadge label={Number(item.quantity) <= 5 ? 'Low Stock' : 'In Stock'} /></TableCell>
                 <TableCell>${item.unitPrice || 0}</TableCell>
                 <TableCell>
-                  <Button size="small" variant="outlined" onClick={() => openEditDialog(item)}>Edit</Button>
+                  {canManageInventory && <Button size="small" variant="outlined" onClick={() => openEditDialog(item)}>Edit</Button>}
                 </TableCell>
               </TableRow>
             ))}
