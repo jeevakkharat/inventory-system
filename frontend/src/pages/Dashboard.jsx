@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Box, Button, Card, Divider, Grid, List, ListItem, ListItemText, Paper, Stack, Typography } from '@mui/material';
 import { ArrowUpRight, Boxes, ClipboardList, DollarSign, Download, TrendingUp, Users, Warehouse } from 'lucide-react';
-import { Bar, Doughnut, Line } from 'react-chartjs-2';
+import { Doughnut, Line } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, BarElement, CategoryScale, Filler, Legend, LinearScale, LineElement, PointElement, Tooltip } from 'chart.js';
 import PageHeader from '../components/common/PageHeader';
 import StatsCard from '../components/charts/StatsCard';
-import { inventoryApi, purchaseApi, transferApi, assignmentApi, auditApi } from '../services/api';
+import { inventoryApi, purchaseApi, transferApi, assignmentApi } from '../services/api';
 import { dashboardStats, recentActivities, lowStockItems } from '../data/dummyData';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Tooltip, Legend, Filler);
@@ -15,30 +15,26 @@ export default function DashboardPage() {
   const [purchases, setPurchases] = useState([]);
   const [transfers, setTransfers] = useState([]);
   const [assignments, setAssignments] = useState([]);
-  const [audit, setAudit] = useState([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [itemsRes, purchasesRes, transfersRes, assignmentsRes, auditRes] = await Promise.all([
+        const [itemsRes, purchasesRes, transfersRes, assignmentsRes] = await Promise.all([
           inventoryApi.getItems(),
           purchaseApi.getPurchases(),
           transferApi.getTransfers(),
           assignmentApi.getAssignments(),
-          auditApi.getAuditLogs(),
         ]);
 
         setInventory(itemsRes?.data?.data || []);
         setPurchases(purchasesRes?.data?.data || []);
         setTransfers(transfersRes?.data?.data || []);
         setAssignments(assignmentsRes?.data?.data || []);
-        setAudit(auditRes?.data?.data || []);
       } catch {
         setInventory([]);
         setPurchases([]);
         setTransfers([]);
         setAssignments([]);
-        setAudit([]);
       }
     };
 
