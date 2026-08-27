@@ -37,6 +37,11 @@ function PrivateRoute({ children }) {
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 }
 
+function RootRedirect() {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  return <Navigate to={isAuthenticated ? '/dashboard' : '/login'} replace />;
+}
+
 function AppShell() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -86,6 +91,7 @@ export default function App() {
       <CssBaseline />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<RootRedirect />} />
         <Route
           path="/"
           element={
@@ -94,7 +100,6 @@ export default function App() {
             </PrivateRoute>
           }
         >
-          <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="users" element={<UsersPage />} />
           <Route path="roles" element={<RolesPage />} />
@@ -107,7 +112,7 @@ export default function App() {
           <Route path="profile" element={<ProfilePage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<RootRedirect />} />
       </Routes>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </ThemeProvider>
