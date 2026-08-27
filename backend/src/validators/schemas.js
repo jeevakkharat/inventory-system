@@ -17,7 +17,7 @@ const loginSchema = z.object({
 const itemSchema = z.object({
   name: z.string().min(1),
   sku: z.string().min(1),
-  categoryId: objectId,
+  categoryId: objectId.optional(),
   quantity: z.number().int().nonnegative().optional(),
 });
 

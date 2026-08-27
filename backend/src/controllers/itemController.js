@@ -1,5 +1,5 @@
 const Item = require('../models/Item');
-require('../models/Category');
+const Category = require('../models/Category');
 const { ApiError, asyncHandler } = require('../utils/apiError');
 const { logAction } = require('../services/auditService');
 
@@ -31,8 +31,17 @@ const getItem = asyncHandler(async (req, res) => {
 // POST /api/items
 const createItem = asyncHandler(async (req, res) => {
   const { name, sku, categoryId, quantity } = req.body;
+  const category = categoryId
+    ? await Category.findById(categoryId)
+    : await Category.findOneAndUpdate(
+      { name: 'General' },
+      { name: 'General', description: 'General inventory category' },
+      { upsert: true, new: true }
+    );
 
-  const item = await Item.create({ name, sku, category: categoryId, quantity: quantity ?? 0 });
+  if (!category) throw new ApiError(400, 'Category not found');
+
+  const item = await Item.create({ name, sku, category: category._id, quantity: quantity ?? 0 });
 
   await logAction({
     userId: req.user.id,

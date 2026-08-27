@@ -71,7 +71,7 @@ export default function InventoryPage() {
       categoryId: form.categoryId,
     };
 
-    if (!payload.name || !payload.sku || !payload.categoryId) return;
+    if (!payload.name || !payload.sku) return;
 
     if (editingId) {
       await inventoryApi.updateItem(editingId, payload);
