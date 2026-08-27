@@ -12,11 +12,20 @@ const register = asyncHandler(async (req, res) => {
   const existing = await User.findOne({ email });
   if (existing) throw new ApiError(409, 'Email already registered');
 
-  const role = await Role.findById(roleId);
-  if (!role) throw new ApiError(400, 'Invalid role');
+  let role = null;
+  if (roleId) {
+    role = await Role.findById(roleId);
+    if (!role) throw new ApiError(400, 'Invalid role');
+  } else {
+    role = await Role.findOne({ name: 'Employee' });
+    if (!role) {
+      role = await Role.create({ name: 'Employee', description: 'Default employee role' });
+    }
+  }
 
   const passwordHash = await bcrypt.hash(password, 10);
   const user = await User.create({ name, email, passwordHash, role: role._id });
+  await user.populate('role');
 
   await logAction({
     userId: user._id,
@@ -29,7 +38,8 @@ const register = asyncHandler(async (req, res) => {
 
   res.status(201).json({
     success: true,
-    data: { id: user._id, name: user.name, email: user.email, role: role.name },
+    data: { id: user._id, name: user.name, email: user.email, role: user.role.name },
+    user: { id: user._id, name: user.name, email: user.email, role: user.role.name },
   });
 });
 
