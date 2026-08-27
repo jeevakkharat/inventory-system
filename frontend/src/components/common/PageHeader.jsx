@@ -3,8 +3,8 @@ import { Link as RouterLink } from 'react-router-dom';
 
 export default function PageHeader({ title, subtitle, breadcrumbs = [] }) {
   return (
-    <Box sx={{ mb: 3 }}>
-      <Stack spacing={1}>
+    <Box sx={{ mb: 1.5 }}>
+      <Stack spacing={0.5}>
         <Breadcrumbs aria-label="breadcrumb" separator="/">
           {breadcrumbs.map((crumb, idx) => (
             <RouterLink key={idx} to={crumb.path} style={{ textDecoration: 'none', color: idx === breadcrumbs.length - 1 ? '#0F172A' : '#64748B' }}>
@@ -15,7 +15,7 @@ export default function PageHeader({ title, subtitle, breadcrumbs = [] }) {
         <Typography variant="h4" fontWeight={700}>{title}</Typography>
         {subtitle && <Typography variant="body2" color="text.secondary">{subtitle}</Typography>}
       </Stack>
-      <Divider sx={{ mt: 2 }} />
+      <Divider sx={{ mt: 1 }} />
     </Box>
   );
 }

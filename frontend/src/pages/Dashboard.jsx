@@ -6,7 +6,7 @@ import { Chart as ChartJS, ArcElement, BarElement, CategoryScale, Filler, Legend
 import PageHeader from '../components/common/PageHeader';
 import StatsCard from '../components/charts/StatsCard';
 import { inventoryApi, purchaseApi, transferApi, assignmentApi, auditApi } from '../services/api';
-import { dashboardStats, recentActivities, lowStockItems, auditLogs } from '../data/dummyData';
+import { dashboardStats, recentActivities, lowStockItems } from '../data/dummyData';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Tooltip, Legend, Filler);
 
@@ -86,8 +86,6 @@ export default function DashboardPage() {
     ],
   };
 
-  const auditList = audit.slice(0, 4) || auditLogs;
-
   return (
     <>
       <PageHeader
@@ -98,8 +96,8 @@ export default function DashboardPage() {
 
       <Box
         sx={{
-          mb: 2,
-          p: 2,
+          mb: 1,
+          p: 1.25,
           borderRadius: 3,
           border: '1px solid rgba(148,163,184,0.18)',
           background: 'linear-gradient(135deg, rgba(37,99,235,0.10), rgba(20,184,166,0.08), rgba(255,255,255,0.85))',
@@ -130,7 +128,7 @@ export default function DashboardPage() {
         </Stack>
       </Box>
 
-      <Grid container spacing={2} sx={{ mb: 1 }}>
+      <Grid container spacing={1.5} sx={{ mb: 1 }}>
         {statsCards.map((card) => (
           <Grid item xs={12} sm={6} md={3} key={card.title}>
             <StatsCard {...card} />
@@ -138,7 +136,7 @@ export default function DashboardPage() {
         ))}
 
         <Grid item xs={12} md={7}>
-          <Paper sx={{ p: 2, borderRadius: 3, background: 'linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.92))', border: '1px solid rgba(148,163,184,0.12)' }}>
+          <Paper sx={{ p: 1.5, borderRadius: 3, background: 'linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.92))', border: '1px solid rgba(148,163,184,0.12)' }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
               <Box>
                 <Typography variant="subtitle2" fontWeight={700}>Inventory flow</Typography>
@@ -149,26 +147,26 @@ export default function DashboardPage() {
                 +7.8%
               </Box>
             </Stack>
-            <Line data={lineChartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false, grid: { display: false } }, y: { display: false, grid: { display: false } } } }} style={{ height: 120 }} />
+            <Line data={lineChartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false, grid: { display: false } }, y: { display: false, grid: { display: false } } } }} style={{ height: 96 }} />
           </Paper>
         </Grid>
 
         <Grid item xs={12} md={5}>
-          <Paper sx={{ p: 2, borderRadius: 3, background: 'linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.92))', border: '1px solid rgba(148,163,184,0.12)' }}>
+          <Paper sx={{ p: 1.5, borderRadius: 3, background: 'linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.92))', border: '1px solid rgba(148,163,184,0.12)' }}>
             <Typography variant="subtitle2" fontWeight={700} mb={0.6}>Category mix</Typography>
-            <Box sx={{ height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Doughnut data={categoryData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '68%' }} style={{ height: 120, maxWidth: 140 }} />
+            <Box sx={{ height: 96, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Doughnut data={categoryData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '68%' }} style={{ height: 96, maxWidth: 112 }} />
             </Box>
           </Paper>
         </Grid>
 
         <Grid item xs={12} md={6} lg={5}>
-          <Paper sx={{ p: 2, borderRadius: 3, height: '100%', border: '1px solid rgba(148,163,184,0.12)' }}>
+          <Paper sx={{ p: 1.5, borderRadius: 3, height: '100%', border: '1px solid rgba(148,163,184,0.12)' }}>
             <Typography variant="subtitle1" fontWeight={700} mb={1}>Priority alerts</Typography>
-            <Stack spacing={1.25}>
+            <Stack spacing={0.75}>
               {(lowStock.length ? lowStock : lowStockItems.slice(0, 4)).map((item) => (
                 <Card key={item.id || item._id} sx={{ p: 1.2, background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.12)', borderRadius: 2 }}>
-                  <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1.5}>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>
                     <Box>
                       <Typography fontWeight={700} sx={{ fontSize: 14 }}>{item.name}</Typography>
                       <Typography variant="caption" color="text.secondary">{item.category || 'Inventory item'}</Typography>
@@ -184,12 +182,12 @@ export default function DashboardPage() {
         </Grid>
 
         <Grid item xs={12} md={6} lg={4}>
-          <Paper sx={{ p: 2, borderRadius: 3, height: '100%', border: '1px solid rgba(148,163,184,0.12)' }}>
+          <Paper sx={{ p: 1.5, borderRadius: 3, height: '100%', border: '1px solid rgba(148,163,184,0.12)' }}>
             <Typography variant="subtitle1" fontWeight={700} mb={1}>Recent activity</Typography>
             <List dense disablePadding>
               {recentActivities.map((activity, idx) => (
                 <Box key={idx}>
-                  <ListItem disablePadding sx={{ py: 0.8 }}>
+                  <ListItem disablePadding sx={{ py: 0.5 }}>
                     <ListItemText
                       primary={activity}
                       secondary="2 hours ago"
@@ -205,21 +203,21 @@ export default function DashboardPage() {
         </Grid>
 
         <Grid item xs={12} lg={3}>
-          <Paper sx={{ p: 2, borderRadius: 3, height: '100%', border: '1px solid rgba(148,163,184,0.12)' }}>
+          <Paper sx={{ p: 1.5, borderRadius: 3, height: '100%', border: '1px solid rgba(148,163,184,0.12)' }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1.2}>
               <Typography variant="subtitle1" fontWeight={700}>Warehouse</Typography>
               <Warehouse size={16} color="#2563EB" />
             </Stack>
-            <Stack spacing={1.2}>
-              <Box sx={{ p: 1.2, borderRadius: 2, background: 'rgba(37,99,235,0.06)' }}>
+            <Stack spacing={0.75}>
+              <Box sx={{ p: 0.9, borderRadius: 2, background: 'rgba(37,99,235,0.06)' }}>
                 <Typography variant="caption" color="text.secondary">Available</Typography>
                 <Typography variant="h6" fontWeight={800}>1,284</Typography>
               </Box>
-              <Box sx={{ p: 1.2, borderRadius: 2, background: 'rgba(20,184,166,0.06)' }}>
+              <Box sx={{ p: 0.9, borderRadius: 2, background: 'rgba(20,184,166,0.06)' }}>
                 <Typography variant="caption" color="text.secondary">In transit</Typography>
                 <Typography variant="h6" fontWeight={800}>{transfers.length || 42}</Typography>
               </Box>
-              <Box sx={{ p: 1.2, borderRadius: 2, background: 'rgba(245,158,11,0.06)' }}>
+              <Box sx={{ p: 0.9, borderRadius: 2, background: 'rgba(245,158,11,0.06)' }}>
                 <Typography variant="caption" color="text.secondary">Needs attention</Typography>
                 <Typography variant="h6" fontWeight={800}>{lowStock.length || 3}</Typography>
               </Box>
@@ -227,24 +225,6 @@ export default function DashboardPage() {
           </Paper>
         </Grid>
 
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2, borderRadius: 3, border: '1px solid rgba(148,163,184,0.12)' }}>
-            <Typography variant="subtitle1" fontWeight={700} mb={1}>Recent audit log</Typography>
-            <Stack spacing={1}>
-              {(auditList || auditLogs).map((log) => (
-                <Box key={log.id || log._id} sx={{ p: 1.2, borderRadius: 2, background: 'rgba(148,163,184,0.05)', border: '1px solid rgba(148,163,184,0.08)' }}>
-                  <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" spacing={1}>
-                    <Box>
-                      <Typography variant="subtitle2" fontWeight={700}>{log.user?.name || log.user || 'System'}</Typography>
-                      <Typography variant="caption" color="text.secondary">{log.action || 'Activity'} </Typography>
-                    </Box>
-                    <Typography variant="caption" color="text.secondary">{log.date || 'Today'}</Typography>
-                  </Stack>
-                </Box>
-              ))}
-            </Stack>
-          </Paper>
-        </Grid>
       </Grid>
     </>
   );
